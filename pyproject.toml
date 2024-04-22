@@ -17,6 +17,7 @@ dependencies = [
     "numpy",
     "matplotlib",
     "cartopy",
+    "apexpy",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -38,9 +39,6 @@ where = ["src"]
 [project.urls]
 "Homepage" = "https://github.com/ljlamarche/magcoordmap"
 "Bug Tracker" = "https://github.com/ljlamarche/magcoordmap/issues"
-
-#[project.scripts]
-#    amisrsynthdata = "amisrsynthdata.syntheticdata:main"
 
 [tool.pytest.ini_options]
 pythonpath = [
