@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+#from apexpy import Apex
 import magcoordmap as mcm
 
 #proj = ccrs.Mercator()
@@ -14,6 +15,8 @@ ax.set_extent([-170., -135., 52., 72.], crs=ccrs.PlateCarree())
 
 ax.coastlines()
 ax.gridlines()
+
+#A = Apex(2023)
 mcm.add_magnetic_gridlines(ax)
 
 plt.show()
