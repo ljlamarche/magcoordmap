@@ -8,7 +8,8 @@ This package can be installed with pip after cloning.
 
 ```
 git clone https://github.com/ljlamarche/magcoordmap.git
-pip install magcoordmap
+cd magcoordmap
+pip install .
 ```
 
 Note that some dependencies ([apexpy](https://apexpy.readthedocs.io/en/latest/) and [cartopy](https://scitools.org.uk/cartopy/docs/latest/)) are dependent on correct linking with compiled libraries on your system.  If installation is proving problematic, try installing these packages independently following their own installation instructions before installing magcoordmap with pip.
