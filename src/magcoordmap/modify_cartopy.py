@@ -1,11 +1,12 @@
 # modify_cartopy.py
 
 import numpy as np
-from matplotlib.ticker import MaxNLocator
+import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
+import cartopy.mpl.gridliner as cgl
 from apexpy import Apex
 
-def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, draw_meridians=True):
+def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, draw_meridians=True, **collection_kwargs):
     """
     Adds a magnetic coordinate system grid to an existing cartopy plot.
 
@@ -54,10 +55,19 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     mlat1 = np.max(boundaries_mlat)
 
     #print(mlon0, mlon1, mlat0, mlat1)
+    line_params = dict(color='orange', linewidth=0.5, zorder=2)
+    for key, value in collection_kwargs.items():
+        line_params[key] = value
     
     
-    ticker = MaxNLocator()
-
+    ticker = mticker.MaxNLocator()
+    # Label formatter functions from https://scitools.org.uk/cartopy/docs/v0.13/_modules/cartopy/mpl/gridliner.html
+    #: A formatter which turns longitude values into nice longitudes such as 110W
+    longitude_formatter = mticker.FuncFormatter(lambda v, pos:
+                                                cgl._east_west_formatted(v))
+    #: A formatter which turns latitude values into nice latitudes such as 45S
+    latitude_formatter = mticker.FuncFormatter(lambda v, pos:
+                                           cgl._north_south_formatted(v))
     if draw_parallels:
         # Add Magnetic Parallels (lines of constant MLAT)
         magnetic_parallels = ticker.tick_values(mlat0, mlat1)
@@ -70,11 +80,13 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
             glat_arr, glon_arr, _ = apex.apex2geo(mlat_arr, mlon_arr, height=apex_height)
             glon_arr[glon_arr<0] = glon_arr[glon_arr<0] + 360.
             line = mapproj.transform_points(geoproj, glon_arr, glat_arr)
-            ax.plot(line[:,0], line[:,1], linewidth=0.5, color='orange', zorder=2)
+            #ax.plot(line[:,0], line[:,1], linewidth=0.5, color='orange', zorder=2, **collection_kwargs)
+            ax.plot(line[:,0], line[:,1], **line_params)
         
             yl = np.interp(x1, line[:,0], line[:,1])
             if yl>y0 and yl<y1:
-                ax.text(x1+3e4, yl, f'{mlat:.0f}°N', verticalalignment='center', color='orange')
+                label_str = latitude_formatter(mlat)
+                ax.text(x1+3e4, yl, label_str, verticalalignment='center', color=line_params['color'])
     
     if draw_meridians:
         # Add Magnetic Meridians (lines of constant MLON)
@@ -86,11 +98,13 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
         
             glat_arr, glon_arr, _ = apex.apex2geo(mlat_arr, mlon_arr, height=apex_height)
             line = mapproj.transform_points(geoproj, glon_arr, glat_arr)
-            ax.plot(line[:,0], line[:,1], linewidth=0.5, color='orange', zorder=2)
+            #ax.plot(line[:,0], line[:,1], linewidth=0.5, color='orange', zorder=2, **collection_kwargs)
+            ax.plot(line[:,0], line[:,1], **line_params)
         
             xl = np.interp(y1, line[:,1], line[:,0])
             if xl>x0 and xl<x1:
-                ax.text(xl, y1+3e4, f'{mlon:.0f}°E', rotation='vertical', verticalalignment='bottom', horizontalalignment='center', color='orange')
+                label_str = longitude_formatter(mlon)
+                ax.text(xl, y1+3e4, label_str, rotation='vertical', verticalalignment='bottom', horizontalalignment='center', color=line_params['color'])
 
 
 
