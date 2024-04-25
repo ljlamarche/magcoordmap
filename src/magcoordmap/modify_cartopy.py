@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 import cartopy.mpl.gridliner as cgl
 from apexpy import Apex
 
-def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, draw_meridians=True, **collection_kwargs):
+def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, draw_meridians=True, xlocator=None, ylocator=None, **collection_kwargs):
     """
     Adds a magnetic coordinate system grid to an existing cartopy plot.
 
@@ -35,33 +35,38 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     if not apex:
         apex = Apex()
 
-    # Find map boundaries
+    # Create default locator objects if not provided
+    if not xlocator:
+        xlocator = mticker.MaxNLocator()
+    if not ylocator:
+        ylocator = mticker.MaxNLocator()
+
+    # Set gridline parameters based on defaults and provided keywords
+    line_params = dict(color='orange', linewidth=0.5, zorder=2)
+    for key, value in collection_kwargs.items():
+        line_params[key] = value
+
+    # Get projections for later transforms
     mapproj = ax.projection
     geoproj = ccrs.Geodetic()
 
+    # Find map boundaries
     x0, x1, y0, y1 = ax.get_extent()
     boundaries_x = np.array([x0, x1, x1, x0])
     boundaries_y = np.array([y0, y0, y1, y1])
-
+    # Get boundaries in geographic coordinates
     boundaries_geo = geoproj.transform_points(mapproj, boundaries_x, boundaries_y)
     boundaries_glon, boundaries_glat, _ = boundaries_geo.T
-
-    #ax.scatter(boundaries_glon, boundaries_glat, transform=geoproj)
-    
+    # Get boundaries in Apex coordinates
     boundaries_mlat, boundaries_mlon = apex.geo2apex(boundaries_glat, boundaries_glon, height=apex_height)
-    
+    # Find min/max magnetic latitude and longitude 
     mlon0 = np.min(boundaries_mlon)
     mlon1 = np.max(boundaries_mlon)
     mlat0 = np.min(boundaries_mlat)
     mlat1 = np.max(boundaries_mlat)
 
-    #print(mlon0, mlon1, mlat0, mlat1)
-    line_params = dict(color='orange', linewidth=0.5, zorder=2)
-    for key, value in collection_kwargs.items():
-        line_params[key] = value
-    
-    
-    ticker = mticker.MaxNLocator()
+   
+
     # Label formatter functions from https://scitools.org.uk/cartopy/docs/v0.13/_modules/cartopy/mpl/gridliner.html
     #: A formatter which turns longitude values into nice longitudes such as 110W
     longitude_formatter = mticker.FuncFormatter(lambda v, pos:
@@ -70,6 +75,7 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     latitude_formatter = mticker.FuncFormatter(lambda v, pos:
                                            cgl._north_south_formatted(v))
 
+    # Label tranformation functions (to offsel labels from edge of plot)
     shift_dist_points = 5
     tr_y = ax.transAxes + mtrans.ScaledTranslation(0.0, shift_dist_points * (1.0 / 72), ax.figure.dpi_scale_trans)
     tr_x = ax.transAxes + mtrans.ScaledTranslation(shift_dist_points * (1.0 / 72), 0.0, ax.figure.dpi_scale_trans)
@@ -79,7 +85,7 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
         # Add Magnetic Parallels (lines of constant MLAT)
 
         # Use matplotlib ticker to find parallel line locations
-        magnetic_parallels = ticker.tick_values(mlat0, mlat1)
+        magnetic_parallels = ylocator.tick_values(mlat0, mlat1)
         magnetic_parallels = magnetic_parallels[(magnetic_parallels>=-90.) & (magnetic_parallels<=90.)]
 
         # Define transform to be used with labels
@@ -109,11 +115,12 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
                 label_str = latitude_formatter(mlat)
                 ax.text(1., yl, label_str, verticalalignment='center', color=line_params['color'], transform=label_transform)
     
+
     if draw_meridians:
         # Add Magnetic Meridians (lines of constant MLON)
 
         # Use matplotlib ticker to find meridian line locations
-        magnetic_meridians = ticker.tick_values(mlon0, mlon1)
+        magnetic_meridians = xlocator.tick_values(mlon0, mlon1)
 
         # Define transform to be used with labels
         #   (data on x and vertical shift on y)
