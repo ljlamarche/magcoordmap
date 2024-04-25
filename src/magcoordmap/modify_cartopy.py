@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.ticker as mticker
+import matplotlib.transforms as mtrans
 import cartopy.crs as ccrs
 import cartopy.mpl.gridliner as cgl
 from apexpy import Apex
@@ -68,43 +69,78 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     #: A formatter which turns latitude values into nice latitudes such as 45S
     latitude_formatter = mticker.FuncFormatter(lambda v, pos:
                                            cgl._north_south_formatted(v))
+
+    shift_dist_points = 5
+    tr_y = ax.transAxes + mtrans.ScaledTranslation(0.0, shift_dist_points * (1.0 / 72), ax.figure.dpi_scale_trans)
+    tr_x = ax.transAxes + mtrans.ScaledTranslation(shift_dist_points * (1.0 / 72), 0.0, ax.figure.dpi_scale_trans)
+
+
     if draw_parallels:
         # Add Magnetic Parallels (lines of constant MLAT)
+
+        # Use matplotlib ticker to find parallel line locations
         magnetic_parallels = ticker.tick_values(mlat0, mlat1)
         magnetic_parallels = magnetic_parallels[(magnetic_parallels>=-90.) & (magnetic_parallels<=90.)]
+
+        # Define transform to be used with labels
+        #   (horizontal shift on x and data on y)
+        label_transform = mtrans.blended_transform_factory(x_transform=tr_x, y_transform=ax.transData)
+
+        # Define mlon array to use for all parallels
         mlon_arr = np.linspace(mlon0, mlon1, 100)
         
         for mlat in magnetic_parallels:
+            # Define mlat array to use for this parallel
             mlat_arr = np.full(100, mlat)
-        
+
+            # Find grid line in geographic coordinates
             glat_arr, glon_arr, _ = apex.apex2geo(mlat_arr, mlon_arr, height=apex_height)
-            glon_arr[glon_arr<0] = glon_arr[glon_arr<0] + 360.
+            # Transform grid line to matplotlib Data coordinates
             line = mapproj.transform_points(geoproj, glon_arr, glat_arr)
-            #ax.plot(line[:,0], line[:,1], linewidth=0.5, color='orange', zorder=2, **collection_kwargs)
+
+            # Plot grid line
             ax.plot(line[:,0], line[:,1], **line_params)
-        
+
+            # Find intersection of gridline with edge of plot
             yl = np.interp(x1, line[:,0], line[:,1])
+
+            # If intersection within the limits of plot, add label
             if yl>y0 and yl<y1:
                 label_str = latitude_formatter(mlat)
-                ax.text(x1+3e4, yl, label_str, verticalalignment='center', color=line_params['color'])
+                ax.text(1., yl, label_str, verticalalignment='center', color=line_params['color'], transform=label_transform)
     
     if draw_meridians:
         # Add Magnetic Meridians (lines of constant MLON)
+
+        # Use matplotlib ticker to find meridian line locations
         magnetic_meridians = ticker.tick_values(mlon0, mlon1)
+
+        # Define transform to be used with labels
+        #   (data on x and vertical shift on y)
+        label_transform = mtrans.blended_transform_factory(x_transform=ax.transData, y_transform=tr_y)
+
+        # Define mlat array to use for all meridians
         mlat_arr = np.linspace(mlat0, mlat1, 100)
         
         for mlon in magnetic_meridians:
+            # Define mlon array to use for this parallel
             mlon_arr = np.full(100, mlon)
         
+            # Find grid line in geographic coordinates
             glat_arr, glon_arr, _ = apex.apex2geo(mlat_arr, mlon_arr, height=apex_height)
+            # Transform grid line to matplotlib Data coordinates
             line = mapproj.transform_points(geoproj, glon_arr, glat_arr)
-            #ax.plot(line[:,0], line[:,1], linewidth=0.5, color='orange', zorder=2, **collection_kwargs)
+
+            # Plot grid line
             ax.plot(line[:,0], line[:,1], **line_params)
-        
+
+            # Fine intersection of gridline with edge of plot
             xl = np.interp(y1, line[:,1], line[:,0])
+
+            # If intersection within the limits of plot, add label
             if xl>x0 and xl<x1:
                 label_str = longitude_formatter(mlon)
-                ax.text(xl, y1+3e4, label_str, rotation='vertical', verticalalignment='bottom', horizontalalignment='center', color=line_params['color'])
+                ax.text(xl, 1., label_str, rotation='vertical', verticalalignment='bottom', horizontalalignment='center', color=line_params['color'], transform=label_transform)
 
 
 
