@@ -31,6 +31,36 @@ A = Apex(2015)
 mcm.add_magnetic_gridlines(ax, apex=A)
 ```
 
+The full list of parameters options for `add_magnetic_gridlines` are listed in the function's docstring.
+
+```
+ax : :class:`matplotlib.axes.Axes`
+    Axes on which to add gridline.  Must have a cartopy projection.
+apex : :class:`apexpy.Apex` (optional)
+    Apex object that defines coordinate system and conversions.  An 
+    Apex object that uses the system's current date will be initialized
+    if not provided.
+apex_height : float (optional)
+    Altitude to use for apex coordinate conversions.  Defaults to 0.
+draw_parallels : bool (optional)
+    Whether or not to draw parallels (lines of constant MLAT).  Defauts
+    to True.
+draw_meridians : bool (optional)
+    Whether or not to draw meridians (lines of constant MLON).  Defaults
+    to True
+xlocator : :class:`matplotlib.ticker.Locator` (optional)
+    Locator object which will be used to determine the locations of the 
+    MLON gridlines.
+ylocator : :class:`matplotlib.ticker.Locator` (optional)
+    Locator object which will be used to determine the locations of the 
+    MLAT gridlines.
+**collection_kwargs : (optional)
+    :class:`matplotlib.collections.Collection` properties, used to 
+    specify properties of the gridline such as linewidth and color.
+
+```
+
+
 The following produces the figure shown on this page.
 
 ```python

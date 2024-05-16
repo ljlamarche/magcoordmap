@@ -34,6 +34,10 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     ylocator : :class:`matplotlib.ticker.Locator` (optional)
         Locator object which will be used to determine the locations of the 
         MLAT gridlines.
+    **collection_kwargs : (optional)
+        :class:`matplotlib.collections.Collection` properties, used to 
+        specify properties of the gridline such as linewidth and color.
+
     """
 
 
