@@ -14,20 +14,26 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     Parameters
     ----------
 
-    ax : :obj:`matplotlib.axes.Axes`
+    ax : :class:`matplotlib.axes.Axes`
         Axes on which to add gridline.  Must have a cartopy projection.
-    apex : :obj:`apexpy.Apex` (optional)
+    apex : :class:`apexpy.Apex` (optional)
         Apex object that defines coordinate system and conversions.  An 
         Apex object that uses the system's current date will be initialized
         if not provided.
-    apex_height : float
+    apex_height : float (optional)
         Altitude to use for apex coordinate conversions.  Defaults to 0.
-    draw_parallels : bool
+    draw_parallels : bool (optional)
         Whether or not to draw parallels (lines of constant MLAT).  Defauts
         to True.
-    draw_meridians : bool
+    draw_meridians : bool (optional)
         Whether or not to draw meridians (lines of constant MLON).  Defaults
         to True
+    xlocator : :class:`matplotlib.ticker.Locator` (optional)
+        Locator object which will be used to determine the locations of the 
+        MLON gridlines.
+    ylocator : :class:`matplotlib.ticker.Locator` (optional)
+        Locator object which will be used to determine the locations of the 
+        MLAT gridlines.
     """
 
 
@@ -35,11 +41,11 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     if not apex:
         apex = Apex()
 
-    # Create default locator objects if not provided
+    # Use the cartopy default locator objects if not provided
     if not xlocator:
-        xlocator = mticker.MaxNLocator()
+        xlocator = cgl.degree_locator
     if not ylocator:
-        ylocator = mticker.MaxNLocator()
+        ylocator = cgl.degree_locator
 
     # Set gridline parameters based on defaults and provided keywords
     line_params = dict(color='orange', linewidth=0.5, zorder=2)
