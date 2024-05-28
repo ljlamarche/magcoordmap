@@ -10,7 +10,7 @@ proj = ccrs.NorthPolarStereo(central_longitude=0.)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection=proj)
 
-gl = ax.gridlines(draw_labels=True, zorder=1)
+gl = ax.gridlines(zorder=1)
 #gl.right_labels = False
 #gl.top_labels = False
 #ax.set_extent([-170., -35., -80., 80.], crs=ccrs.PlateCarree())
