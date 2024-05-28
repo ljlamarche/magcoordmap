@@ -145,24 +145,8 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     mapproj = ax.projection
     geoproj = ccrs.Geodetic()
 
-    ## Find map boundaries
-    #x0, x1, y0, y1 = ax.get_extent()
-    #boundaries_x = np.array([x0, x1, x1, x0])
-    #boundaries_y = np.array([y0, y0, y1, y1])
-    ## Get boundaries in geographic coordinates
-    #boundaries_geo = geoproj.transform_points(mapproj, boundaries_x, boundaries_y)
-    #boundaries_glon, boundaries_glat, _ = boundaries_geo.T
-    ## Get boundaries in Apex coordinates
-    #boundaries_mlat, boundaries_mlon = apex.geo2apex(boundaries_glat, boundaries_glon, height=apex_height)
-    ## Find min/max magnetic latitude and longitude 
-    #mlon0 = np.min(boundaries_mlon)
-    #mlon1 = np.max(boundaries_mlon)
-    #mlat0 = np.min(boundaries_mlat)
-    #mlat1 = np.max(boundaries_mlat)
-
+    # Find map boundaries
     mlon0, mlon1, mlat0, mlat1 = axes_domain(ax, apex, apex_height)
-
-   
 
     # Label formatter functions from https://scitools.org.uk/cartopy/docs/v0.13/_modules/cartopy/mpl/gridliner.html
     #: A formatter which turns longitude values into nice longitudes such as 110W
