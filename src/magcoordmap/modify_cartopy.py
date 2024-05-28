@@ -7,6 +7,22 @@ import cartopy.crs as ccrs
 import cartopy.mpl.gridliner as cgl
 from apexpy import Apex
 
+# Notes on adding labels to gridlines:
+# Due to the fact that both parallels and meridians may intersect any or all of the edges of a plot
+#   depending on the map projection and extent, this can be quite tricky.
+# Labels frequently overlap each other
+# Try to make use of functions and code from the more recent version of the cartopy Gridliner class
+#   (avoid the older version - didn't work on all projections)
+# May be able to just inheret Gridliner class and overwrite some functions
+# https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.mpl.gridliner.Gridliner.html
+# https://github.com/SciTools/cartopy/blob/main/lib/cartopy/mpl/gridliner.py
+
+# Also look into using the FeatureArtist class to make gridlines more dynamic
+#   This MAY allow for things like resizeable maps and modifying features of the gridline after the
+#   fact, which is currently supported by the main cartopy.
+# https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.mpl.feature_artist.FeatureArtist.html
+# https://github.com/SciTools/cartopy/blob/main/lib/cartopy/mpl/feature_artist.py
+
 def axes_domain(ax, apex, apex_height):
     """
     Find max and min mlat and mlon value contained within axes.  To be used to select appropriate grid lines.
