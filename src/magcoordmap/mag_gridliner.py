@@ -214,9 +214,7 @@ class MagGridliner(cart_gl.Gridliner):
 
         mlat_lines, mlon_lines, _ = self.A.apex2geo(lon_lines[:, :, 1], lon_lines[:, :, 0], height=300.)
         for i in range(mlon_lines.shape[0]):
-            if np.any(np.diff(mlon_lines[i]) < -350.):
-                cycle_index = mlon_lines[i] < 0.
-                mlon_lines[i, cycle_index] = mlon_lines[i, cycle_index] + 360.
+            mlon_lines[i] = np.unwrap(mlon_lines[i], period=360.)
         lon_lines = np.array([mlon_lines, mlat_lines]).transpose((1,2,0))
 
         if self.xlines:
@@ -262,9 +260,7 @@ class MagGridliner(cart_gl.Gridliner):
 
         mlat_lines, mlon_lines, _ = self.A.apex2geo(lat_lines[:, :, 1], lat_lines[:, :, 0], height=300.)
         for i in range(mlon_lines.shape[0]):
-            if np.any(np.diff(mlon_lines[i]) < -350.):
-                cycle_index = mlon_lines[i] < 0.
-                mlon_lines[i, cycle_index] = mlon_lines[i, cycle_index] + 360.
+            mlon_lines[i] = np.unwrap(mlon_lines[i], period=360.)
         lat_lines = np.array([mlon_lines, mlat_lines]).transpose((1,2,0))
 
         #print(lat_lines[0])
