@@ -3,6 +3,9 @@ import cartopy.mpl.gridliner as cart_gl
 import cartopy.crs as ccrs
 from apexpy import Apex
 
+import operator
+import itertools
+
 import matplotlib
 import matplotlib.artist
 import matplotlib.collections as mcollections
@@ -27,10 +30,11 @@ class MagGridliner(cart_gl.Gridliner):
     def __init__(self, ax):
 
         self.A = Apex()
+        self.apex_height = 0.
 
         #proj = ccrs.AzimuthalEquidistant(central_longitude=-147, central_latitude=64)
         proj = ccrs.PlateCarree()
-        super().__init__(ax, proj, collection_kwargs={'color':'magenta'})
+        super().__init__(ax, proj, collection_kwargs={'color':'magenta'}, draw_labels=True, xlabel_style={'color':'purple'}, ylabel_style={'color':'green'})
 
         #print(self.xline_artists)
 
@@ -58,7 +62,7 @@ class MagGridliner(cart_gl.Gridliner):
 
         in_data = desired_trans.transform(coords)
 
-        mlat, mlon = self.A.geo2apex(in_data[:,1], in_data[:,0], height=300.)
+        mlat, mlon = self.A.geo2apex(in_data[:,1], in_data[:,0], height=self.apex_height)
         apex_data = np.array([mlon, mlat]).T
         #print(in_data.shape, apex_data.shape)
 
@@ -212,7 +216,7 @@ class MagGridliner(cart_gl.Gridliner):
         lon_lines[:, :, 1] = np.linspace(
             lat_min, lat_max, n_steps)[np.newaxis, :]
 
-        mlat_lines, mlon_lines, _ = self.A.apex2geo(lon_lines[:, :, 1], lon_lines[:, :, 0], height=300.)
+        mlat_lines, mlon_lines, _ = self.A.apex2geo(lon_lines[:, :, 1], lon_lines[:, :, 0], height=self.apex_height)
         for i in range(mlon_lines.shape[0]):
             mlon_lines[i] = np.unwrap(mlon_lines[i], period=360.)
         lon_lines = np.array([mlon_lines, mlat_lines]).transpose((1,2,0))
@@ -257,8 +261,10 @@ class MagGridliner(cart_gl.Gridliner):
         # 1. Set something so that when the date line is crossed, coordinates cover the entire globe
         #       and make sure to somehow line up so 180 geo is plotted on both ends
         # 2. Sanitize longitudes so they increase monotonically even crossing the date line
+        # Solution: Use unwrap on longitude array after converting to geodetic so it's always increasing
+        #   monotonically.  This needs to be done for both the parallels AND meridians.
 
-        mlat_lines, mlon_lines, _ = self.A.apex2geo(lat_lines[:, :, 1], lat_lines[:, :, 0], height=300.)
+        mlat_lines, mlon_lines, _ = self.A.apex2geo(lat_lines[:, :, 1], lat_lines[:, :, 0], height=self.apex_height)
         for i in range(mlon_lines.shape[0]):
             mlon_lines[i] = np.unwrap(mlon_lines[i], period=360.)
         lat_lines = np.array([mlon_lines, mlat_lines]).transpose((1,2,0))
@@ -476,6 +482,7 @@ class MagGridliner(cart_gl.Gridliner):
                             continue
                         x = x_midpoints[i]
                         y = tick_value
+                        y, x, _ = self.A.apex2geo(y, x, self.apex_height)
                         kw.update(clip_on=True)
                         y_set = True
                     else:
@@ -487,6 +494,7 @@ class MagGridliner(cart_gl.Gridliner):
                             continue
                         x = tick_value
                         y = y_midpoints[i]
+                        y, x, _ = self.A.apex2geo(y, x, self.apex_height)
                         kw.update(clip_on=True)
                     elif not y_set:
                         y = pt0[1]

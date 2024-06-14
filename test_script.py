@@ -4,9 +4,9 @@ import cartopy.crs as ccrs
 import magcoordmap as mcm
 from magcoordmap import mag_gridliner
 
-#proj = ccrs.Mercator()
+proj = ccrs.Mollweide()
 #proj = ccrs.AzimuthalEquidistant(central_longitude=-147, central_latitude=64)
-proj = ccrs.NorthPolarStereo(central_longitude=0.)
+#proj = ccrs.NorthPolarStereo(central_longitude=0.)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection=proj)
@@ -17,7 +17,7 @@ gl = ax.gridlines(draw_labels=True, zorder=1)
 #ax.set_extent([-170., -35., -80., 80.], crs=ccrs.PlateCarree())
 #ax.set_extent([-170., -135., 52., 72.], crs=ccrs.PlateCarree())
 #ax.set_extent([-170., -135., 52., 72.], crs=ccrs.PlateCarree())
-ax.set_extent([-45., 135., 40., 40.], crs=ccrs.PlateCarree())
+#ax.set_extent([-45., 135., 40., 40.], crs=ccrs.PlateCarree())
 
 ax.coastlines()
 ax.gridlines()
