@@ -1,1 +1,1 @@
-from .modify_cartopy import add_magnetic_gridlines
+from .maggridliner import maggridlines

@@ -26,161 +26,44 @@ from cartopy.mpl.ticker import (
 )
 
 
-#def maggridlines(ax, apex=None, apex_height=0., draw_labels=False,
-#              xlocs=None, ylocs=None, dms=False,
-#              x_inline=None, y_inline=None, auto_inline=True,
-#              xformatter=None, yformatter=None, xlim=None, ylim=None,
-#              rotate_labels=None, xlabel_style=None, ylabel_style=None,
-#              labels_bbox_style=None, xpadding=5, ypadding=5,
-#              offset_angle=25, auto_update=None, formatter_kwargs=None,
-#              **kwargs):
 def maggridlines(ax, apex=None, apex_height=0., **gl_kwargs):
     """
-    Automatically add gridlines to the axes, in the given coordinate
-    system, at draw time.
+    Automatically add magnetic gridlines to the axes, at draw time.  This
+    will use Modified Apex coordinates (Richmond, 1995; Laundal, 2017).
 
     Parameters
     ----------
-    crs: optional
-        The :class:`cartopy._crs.CRS` defining the coordinate system in
-        which gridlines are drawn.
-        Defaults to :class:`cartopy.crs.PlateCarree`.
-    draw_labels: optional
-        Toggle whether to draw labels. For finer control, attributes of
-        :class:`Gridliner` may be modified individually. Defaults to False.
-
-        - string: "x" or "y" to only draw labels of the respective
-          coordinate in the CRS.
-        - list: Can contain the side identifiers and/or coordinate
-          types to select which ones to draw.
-          For all labels one would use
-          `["x", "y", "top", "bottom", "left", "right", "geo"]`.
-        - dict: The keys are the side identifiers
-          ("top", "bottom", "left", "right") and the values are the
-          coordinates ("x", "y"); this way you can precisely
-          decide what kind of label to draw and where.
-          For x labels on the bottom and y labels on the right you
-          could pass in `{"bottom": "x", "left": "y"}`.
-
-        Note that, by default, x and y labels are not drawn on left/right
-        and top/bottom edges respectively unless explicitly requested.
-
-    xlocs: optional
-        An iterable of gridline locations or a
-        :class:`matplotlib.ticker.Locator` instance which will be
-        used to determine the locations of the gridlines in the
-        x-coordinate of the given CRS. Defaults to None, which
-        implies automatic locating of the gridlines.
-    ylocs: optional
-        An iterable of gridline locations or a
-        :class:`matplotlib.ticker.Locator` instance which will be
-        used to determine the locations of the gridlines in the
-        y-coordinate of the given CRS. Defaults to None, which
-        implies automatic locating of the gridlines.
-    dms: bool
-        When default longitude and latitude locators and formatters are
-        used, ticks are able to stop on minutes and seconds if minutes is
-        set to True, and not fraction of degrees. This keyword is passed
-        to :class:`~cartopy.mpl.gridliner.Gridliner` and has no effect
-        if xlocs and ylocs are explicitly set.
-    x_inline: optional
-        Toggle whether the x labels drawn should be inline.
-    y_inline: optional
-        Toggle whether the y labels drawn should be inline.
-    auto_inline: optional
-        Set x_inline and y_inline automatically based on projection
-    xformatter: optional
-        A :class:`matplotlib.ticker.Formatter` instance to format labels
-        for x-coordinate gridlines. It defaults to None, which implies the
-        use of a :class:`cartopy.mpl.ticker.LongitudeFormatter` initiated
-        with the ``dms`` argument, if the crs is of
-        :class:`~cartopy.crs.PlateCarree` type.
-    yformatter: optional
-        A :class:`matplotlib.ticker.Formatter` instance to format labels
-        for y-coordinate gridlines. It defaults to None, which implies the
-        use of a :class:`cartopy.mpl.ticker.LatitudeFormatter` initiated
-        with the ``dms`` argument, if the crs is of
-        :class:`~cartopy.crs.PlateCarree` type.
-    xlim: optional
-        Set a limit for the gridlines so that they do not go all the
-        way to the edge of the boundary. xlim can be a single number or
-        a (min, max) tuple. If a single number, the limits will be
-        (-xlim, +xlim).
-    ylim: optional
-        Set a limit for the gridlines so that they do not go all the
-        way to the edge of the boundary. ylim can be a single number or
-        a (min, max) tuple. If a single number, the limits will be
-        (-ylim, +ylim).
-    rotate_labels: optional, bool, str
-        Allow the rotation of non-inline labels.
-
-        - False: Do not rotate the labels.
-        - True: Rotate the labels parallel to the gridlines.
-        - None: no rotation except for some projections (default).
-        - A float: Rotate labels by this value in degrees.
-
-    xlabel_style: dict
-        A dictionary passed through to ``ax.text`` on x label creation
-        for styling of the text labels.
-    ylabel_style: dict
-        A dictionary passed through to ``ax.text`` on y label creation
-        for styling of the text labels.
-    labels_bbox_style: dict
-        bbox style for all text labels.
-    xpadding: float
-        Padding for x labels. If negative, the labels are
-        drawn inside the map.
-    ypadding: float
-        Padding for y labels. If negative, the labels are
-        drawn inside the map.
-    offset_angle: float
-        Difference of angle in degrees from 90 to define when
-        a label must be flipped to be more readable.
-        For example, a value of 10 makes a vertical top label to be
-        flipped only at 100 degrees.
-    auto_update: bool, default=True
-        Whether to update the gridlines and labels when the plot is
-        refreshed.
-
-        .. deprecated:: 0.23
-           In future the gridlines and labels will always be updated.
-
-    formatter_kwargs: dict, optional
-        Options passed to the default formatters.
-        See :class:`~cartopy.mpl.ticker.LongitudeFormatter` and
-        :class:`~cartopy.mpl.ticker.LatitudeFormatter`
-
+    ax:
+        The :class:`cartopy.mpl.geoaxes.GeoAxes` instance to draw gridlines on.
+    apex: optional
+        A :class:`apexpy.Apex` instance to calculate the magnetic coordinate
+        grid.  By default, this will be created as `Apex()`, which uses the 
+        system date as the epoch an a reference height of 0.
+    apex_height: float, optional
+        The altitude (km) to use for the apex grid.
     Keyword Parameters
+
     ------------------
-    **kwargs:
-        All other keywords control line properties.  These are passed
-        through to :class:`matplotlib.collections.Collection`.
+    **gl_kwargs:
+        All other keywords control gridline properties.  These are passed
+        through to :class:`cartopy.mpl.gridliner.Gridliner`.
 
     Returns
     -------
-    gridliner
-        A :class:`cartopy.mpl.gridliner.Gridliner` instance.
+    maggridliner
+        A :class:`magcoodmap.maggridliner.MagGridliner` instance.
 
     Notes
     -----
-    The "x" and "y" for locations and inline settings do not necessarily
-    correspond to X and Y, but to the first and second coordinates of the
-    specified CRS. For the common case of PlateCarree gridlines, these
-    correspond to longitudes and latitudes. Depending on the projection
-    used for the map, meridians and parallels can cross both the X axis and
-    the Y axis.
+    Apex latitude is defined by the apex altitude of a paricular magnetic 
+    field line, so some lines of magnetic latitude will be undefined above a
+    certain altitude.  When using a non-zero value for `apex_height`, if the
+    plot area contains a magnetic field line that has an apex less that the
+    specified height, the code will raise an `apexpy.ApexHeightError`.  For
+    global plots, keep apex_height=0.
+
     """
 
-    #mgl = MagGridliner(
-    #    ax, apex=apex, apex_height=apex_height, draw_labels=draw_labels, 
-    #    xlocator=xlocs, ylocator=ylocs, collection_kwargs=kwargs, dms=dms,
-    #    x_inline=x_inline, y_inline=y_inline, auto_inline=auto_inline,
-    #    xformatter=xformatter, yformatter=yformatter,
-    #    xlim=xlim, ylim=ylim, rotate_labels=rotate_labels,
-    #    xlabel_style=xlabel_style, ylabel_style=ylabel_style,
-    #    labels_bbox_style=labels_bbox_style,
-    #    xpadding=xpadding, ypadding=ypadding, offset_angle=offset_angle,
-    #    auto_update=auto_update, formatter_kwargs=formatter_kwargs)
     mgl = MagGridliner(ax, apex=apex, apex_height=apex_height, **gl_kwargs)
     ax.add_artist(mgl)
 
@@ -189,30 +72,18 @@ def maggridlines(ax, apex=None, apex_height=0., **gl_kwargs):
 
 class MagGridliner(Gridliner):
 
-    #def __init__(self, axes, apex=None, apex_height=0., draw_labels=False,
-    #             xlocator=None, ylocator=None, collection_kwargs=None,
-    #             xformatter=None, yformatter=None, dms=False,
-    #             x_inline=None, y_inline=None, auto_inline=True,
-    #             xlim=None, ylim=None, rotate_labels=None,
-    #             xlabel_style=None, ylabel_style=None, labels_bbox_style=None,
-    #             xpadding=5, ypadding=5, offset_angle=25,
-    #             auto_update=None, formatter_kwargs=None):
     def __init__(self, axes, apex=None, apex_height=0., **gl_kwargs):
 
-        #self.A = Apex()
-        #self.apex_height = 0.
-
         # Create and Apex object for coordinate conversion if one is not provided
+        print(apex)
         if apex:
             self.A = apex
         else:
             self.A = Apex()
         self.apex_height = apex_height
 
-        # Current method of blanket passing kwargs directly to super class works, but
-        # need to figure out a way to modify such that defaulf values are set
-
-        # Set gridline parameters based on defaults and provided keywords
+        # Set the default gridline color in cases where the user hasn't specified
+        #   a line color
         for param_key in ['collection_kwargs', 'xlabel_style', 'ylabel_style']:
             line_params = dict(color='orange')
             if param_key in gl_kwargs.keys():
@@ -220,32 +91,9 @@ class MagGridliner(Gridliner):
                     line_params[key] = value
             gl_kwargs[param_key] = line_params
 
-
-       # label_style = dict(color='orange')
-       # if 'xlabel_style' in gl_kwargs.keys():
-       #     for key, value in gl_kwargs['xlabel_style'].items():
-       #         line_params[key] = value
-       # gl_kwargs['collection_kwargs'] = line_params
-
-        #proj = ccrs.AzimuthalEquidistant(central_longitude=-147, central_latitude=64)
+        # Initialize Gridliner class
         proj = PlateCarree()
-        #super().__init__(axes, proj, collection_kwargs={'color':'magenta'}, draw_labels=True, xlabel_style={'color':'purple'}, ylabel_style={'color':'green'})
         super().__init__(axes, proj, **gl_kwargs)
-        #super().__init__(axes, proj, draw_labels=draw_labels, 
-        #xlocator=xlocs, ylocator=ylocs, collection_kwargs=collection_kwargs, dms=dms,
-        #x_inline=x_inline, y_inline=y_inline, auto_inline=auto_inline,
-        #xformatter=xformatter, yformatter=yformatter,
-        #xlim=xlim, ylim=ylim, rotate_labels=rotate_labels,
-        #xlabel_style=xlabel_style, ylabel_style=ylabel_style,
-        #labels_bbox_style=labels_bbox_style,
-        #xpadding=xpadding, ypadding=ypadding, offset_angle=offset_angle,
-        #auto_update=auto_update, formatter_kwargs=formatter_kwargs)
-
-        #print(self.xline_artists)
-
-        print('MagGridliner initialized!!')
-
-        #print(self._axes_domain())
 
 
     def _axes_domain(self, nx=None, ny=None):
@@ -291,6 +139,7 @@ class MagGridliner(Gridliner):
 
         # If there were no data points in the axes we just use the x and y
         # range of the projection.
+        # Need to figure out if this should be adjusted for magnetic coordinates
         if inside.size == 0:
             lon_range = self.crs.x_limits
             lat_range = self.crs.y_limits
@@ -306,7 +155,6 @@ class MagGridliner(Gridliner):
                 lat_max = lat_max.max()
                 lon_range = np.nanmin(inside[:, 0]), np.nanmax(inside[:, 0])
                 lat_range = np.nanmin(inside[:, 1]), lat_max
-        #print(lon_range, lat_range)
 
         # Will require careful handling of projections
         # Get back to this later
@@ -388,8 +236,6 @@ class MagGridliner(Gridliner):
         #sup = min(lat_lim[1], crs.y_limits[1])
         #lat_ticks = [value for value in lat_ticks if inf <= value <= sup]
 
-        print(lat_ticks)
-        print(lon_ticks)
 
         #####################
         # Gridlines drawing #
@@ -473,8 +319,6 @@ class MagGridliner(Gridliner):
         for i in range(mlon_lines.shape[0]):
             mlon_lines[i] = np.unwrap(mlon_lines[i], period=360.)
         lat_lines = np.array([mlon_lines, mlat_lines]).transpose((1,2,0))
-
-        #print(lat_lines[0])
 
         if self.ylines:
             if self.yline_artists:
