@@ -157,6 +157,9 @@ def add_magnetic_gridlines(ax, apex=None, apex_height=0., draw_parallels=True, d
     for key, value in collection_kwargs.items():
         line_params[key] = value
 
+    gl = mag_gridliner.MagGridliner(ax)
+    ax.add_artist(gl)
+
     # Get projections for later transforms
     mapproj = ax.projection
     geoproj = ccrs.Geodetic()
