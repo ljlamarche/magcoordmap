@@ -1,30 +1,17 @@
 # mag_gridliner.py
-#import cartopy.mpl.gridliner as cart_gl
-#import cartopy.crs as ccrs
-from apexpy import Apex
 
 import operator
 import itertools
 
 import matplotlib
-import matplotlib.artist
 import matplotlib.collections as mcollections
-import matplotlib.text
-import matplotlib.ticker as mticker
-import matplotlib.transforms as mtrans
 import numpy as np
 import shapely.geometry as sgeom
 
-import cartopy
 from cartopy.crs import PlateCarree, Projection, _RectangularProjection
 from cartopy.mpl.gridliner import Gridliner
-from cartopy.mpl.ticker import (
-    LatitudeFormatter,
-    LatitudeLocator,
-    LongitudeFormatter,
-    LongitudeLocator,
-)
 
+from apexpy import Apex
 
 def maggridlines(ax, apex=None, apex_height=0., **gl_kwargs):
     """

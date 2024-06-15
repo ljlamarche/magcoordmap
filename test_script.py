@@ -14,7 +14,7 @@ gl = ax.gridlines(draw_labels=True, zorder=1)
 gl.right_labels = False
 gl.top_labels = False
 #ax.set_extent([-170., -35., -80., 80.], crs=ccrs.PlateCarree())
-ax.set_extent([-170., -135., 52., 72.], crs=ccrs.PlateCarree())
+ax.set_extent([-161., -131., 50., 75], crs=ccrs.PlateCarree())
 #ax.set_extent([-45., 135., 40., 40.], crs=ccrs.PlateCarree())
 
 ax.coastlines()
