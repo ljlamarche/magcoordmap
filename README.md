@@ -15,7 +15,7 @@ pip install .
 Note that some dependencies ([apexpy](https://apexpy.readthedocs.io/en/latest/) and [cartopy](https://scitools.org.uk/cartopy/docs/latest/)) are dependent on correct linking with compiled libraries on your system.  If installation is proving problematic, try installing these packages independently following their own installation instructions before installing magcoordmap with pip.
 
 # Usage
-To add a magnetic coordinate grid to a cartopy map with the axes `ax`, simpily import `magcoordmap` and use the `add_magnetic_gridlines` function.
+To add a magnetic coordinate grid to a cartopy map with the axes `ax`, simpily import `magcoordmap` and use the `maggridlines` function.
 
 ```python
 import magcoordmap as mcm
@@ -28,7 +28,7 @@ By default, this uses Apex coordinates for the present system date at 0 km altit
 import magcoordmap as mcm
 from apexpy import Apex
 A = Apex(2015)
-mcm.add_magnetic_gridlines(ax, apex=A)
+mcm.maggridlines(ax, apex=A)
 ```
 
 The function also has an option to specify the altitude of the magnetic grid with the `apex_height` option.  Note that all apex latitudes are not defined at all altitudes, and an error will be raised if the plot includes a magnetic field line with an apex lower than the specified height.  For global maps, it is recommended to keep this value at 0.
