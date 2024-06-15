@@ -15,11 +15,11 @@ pip install .
 Note that some dependencies ([apexpy](https://apexpy.readthedocs.io/en/latest/) and [cartopy](https://scitools.org.uk/cartopy/docs/latest/)) are dependent on correct linking with compiled libraries on your system.  If installation is proving problematic, try installing these packages independently following their own installation instructions before installing magcoordmap with pip.
 
 # Usage
-To add a magnetic coordinate grid to a cartopy map with the axes `ax`, simpily import `magcoordmap` and use the `add_magnetic_gridlines` function.
+To add a magnetic coordinate grid to a cartopy map with the axes `ax`, simpily import `magcoordmap` and use the `maggridlines` function.
 
 ```python
 import magcoordmap as mcm
-mcm.add_magnetic_gridlines(ax)
+mcm.maggridlines(ax)
 ```
 
 By default, this uses Apex coordinates for the present system date at 0 km altitude.  If you would like to customize this, initialize your own Apex object and pass it to the function.
@@ -28,37 +28,12 @@ By default, this uses Apex coordinates for the present system date at 0 km altit
 import magcoordmap as mcm
 from apexpy import Apex
 A = Apex(2015)
-mcm.add_magnetic_gridlines(ax, apex=A)
+mcm.maggridlines(ax, apex=A)
 ```
 
-The full list of parameters options for `add_magnetic_gridlines` are listed in the function's docstring.
+The function also has an option to specify the altitude of the magnetic grid with the `apex_height` option.  Note that all apex latitudes are not defined at all altitudes, and an error will be raised if the plot includes a magnetic field line with an apex lower than the specified height.  For global maps, it is recommended to keep this value at 0.
 
-```
-ax : :class:`matplotlib.axes.Axes`
-    Axes on which to add gridline.  Must have a cartopy projection.
-apex : :class:`apexpy.Apex` (optional)
-    Apex object that defines coordinate system and conversions.  An 
-    Apex object that uses the system's current date will be initialized
-    if not provided.
-apex_height : float (optional)
-    Altitude to use for apex coordinate conversions.  Defaults to 0.
-draw_parallels : bool (optional)
-    Whether or not to draw parallels (lines of constant MLAT).  Defauts
-    to True.
-draw_meridians : bool (optional)
-    Whether or not to draw meridians (lines of constant MLON).  Defaults
-    to True
-xlocator : :class:`matplotlib.ticker.Locator` (optional)
-    Locator object which will be used to determine the locations of the 
-    MLON gridlines.
-ylocator : :class:`matplotlib.ticker.Locator` (optional)
-    Locator object which will be used to determine the locations of the 
-    MLAT gridlines.
-**collection_kwargs : (optional)
-    :class:`matplotlib.collections.Collection` properties, used to 
-    specify properties of the gridline such as linewidth and color.
-
-```
+Additional keyword arguments are avaiable that control the characteristics and positioning of gridlines.  Because `MagGridliner` inherets from cartopy's `Gridliner` class, all the parameters from [gridlines](https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.mpl.geoaxes.GeoAxes.html#cartopy.mpl.geoaxes.GeoAxes.gridlines) will also be accepted by the maggridlines function (with the exception of `crs`, which is not relevant).
 
 
 The following produces the figure shown on this page.
@@ -82,7 +57,9 @@ ax.coastlines()
 ax.gridlines()
 
 # Add magnetic field lines
-mcm.add_magnetic_gridlines(ax)
+mgl = mcm.maggridlines(ax)
+mgl.left_labels=False
+mgl.bottom_labels=False
 
 plt.show()
 ```
