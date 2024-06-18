@@ -1,5 +1,15 @@
 # mag_gridliner.py
 
+# This file is modified from gridliner.py, which is part of Cartopy.
+# Cartopy is released under the BSD 3-clause license.  The source code and
+# full licence for Cartopy are available at https://github.com/SciTools/cartopy
+
+# Cartopy code: Copyright (c) Crown and Cartopy contributors. All rights reserved.
+# Magcoord code: Copyright (c) Leslie Lamarche. All rights reserved.
+
+# This file is part of Magcoordmap and is released under the BSD 3-clause license.
+# See LICENSE in the root of the repository for full licensing details.
+
 import operator
 import itertools
 
@@ -62,7 +72,6 @@ class MagGridliner(Gridliner):
     def __init__(self, axes, apex=None, apex_height=0., **gl_kwargs):
 
         # Create and Apex object for coordinate conversion if one is not provided
-        print(apex)
         if apex:
             self.A = apex
         else:
@@ -197,7 +206,7 @@ class MagGridliner(Gridliner):
 
         # Inits
         lon_lim, lat_lim = self._axes_domain(nx=nx, ny=ny)
-        print(lon_lim, lat_lim)
+        #print(lon_lim, lat_lim)
         transform = self._crs_transform()
         n_steps = self.n_steps
         crs = self.crs

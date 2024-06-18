@@ -63,3 +63,21 @@ mgl.bottom_labels=False
 
 plt.show()
 ```
+
+# License
+Magcoordmap is released under the BSD 3-clause license. See LICENSE in the root of the repository for full licensing details.
+
+Copyright (c) Leslie Lamarche. All rights reserved.
+
+Parts of the source code are originally from [Cartopy](https://github.com/SciTools/cartopy), which is also releasedunder the BSD 3-clause license.  These parts retain their original copyright.
+
+Copyright (c) Crown and Cartopy contributors. All rights reserved.
+
+# Acknowlegements
+This code was developed under the following awards:
+
+- NSF Grant 2027300
+- NSF Grant 2329981
+- NASA Grant 80NSSC21K0458
+- NASA Grant 80NSSC21K1354
+- NASA Grant 80NSSC21K1318
