@@ -393,6 +393,10 @@ class MagGridliner(Gridliner):
         # Cache a few things so they aren't re-calculated in the loops.
         crs_transform = self._crs_transform().transform
         inverse_data_transform = self.axes.transData.inverted().transform_point
+        # Calculate size of map
+        minx, _ = crs_transform((-180., 0.))
+        maxx, _ = crs_transform((180., 0.))
+        map_size = maxx-minx
 
         # Create a generator for the Label objects.
         generate_labels = self._generate_labels()
@@ -414,16 +418,33 @@ class MagGridliner(Gridliner):
             formatter.set_locs(line_ticks)
 
             for line_coords, tick_value in zip(lines, line_ticks):
+                #print('TICK VALUE', tick_value)
                 # Intersection of line with map boundary
                 line_coords = crs_transform(line_coords)
                 infs = np.isnan(line_coords).any(axis=1)
                 line_coords = line_coords.compress(~infs, axis=0)
+                # Calculate distance between sucessive points
+                diff = np.diff(line_coords, axis=0)
+                diff_dist = np.linalg.norm(diff, axis=1)
+                # Reformulate lines to deal with discontinuities crossing IDL
+                if map_size>1. and np.any(diff_dist > 0.5*map_size):
+                    break_idx = np.argwhere(diff_dist > 0.5*map_size)[0][0]+1
+                    line_coords1 = line_coords.copy()
+                    line_coords1[:break_idx,0] -= map_size
+                    line_coords2 = line_coords1.copy()
+                    line_coords2[:,0] += map_size
+                    line_coords = np.concatenate((line_coords1, line_coords2))
                 if line_coords.size == 0:
                     continue
                 line = sgeom.LineString(line_coords)
                 if not line.intersects(map_boundary):
                     continue
                 intersection = line.intersection(map_boundary)
+                # Debugging check for where intersections are taking place
+                #import matplotlib.pyplot as plt
+                #plt.plot(*line.xy)
+                #plt.plot(*map_boundary.exterior.xy)
+                #plt.show()
                 del line
                 if intersection.is_empty:
                     continue
@@ -494,6 +515,7 @@ class MagGridliner(Gridliner):
                         f'labels: {intersection.__class__.__name__}')
                     continue
                 del intersection
+
 
                 # Loop on head and tail and plot label by extrapolation
                 for i, (pt0, pt1) in itertools.chain.from_iterable(
