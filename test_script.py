@@ -1,34 +1,55 @@
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
 from apexpy import Apex
 import magcoordmap as mcm
 
-proj = ccrs.PlateCarree()
-#proj = ccrs.AzimuthalEquidistant(central_longitude=-147, central_latitude=64)
-#proj = ccrs.NorthPolarStereo(central_longitude=0.)
+projections = [
+    ccrs.PlateCarree(),
+    ccrs.AlbersEqualArea(),
+    ccrs.AzimuthalEquidistant(),
+    ccrs.LambertConformal(),
+    ccrs.LambertCylindrical(),
+    ccrs.Mercator(),
+    ccrs.Miller(),
+    ccrs.Mollweide(),
+    ccrs.Orthographic(),
+    ccrs.Robinson(),
+    ccrs.Sinusoidal(),
+    ccrs.Stereographic(),
+    ccrs.InterruptedGoodeHomolosine(emphasis='land'),
+    ccrs.RotatedPole(pole_longitude=180.0, pole_latitude=36.0, central_rotated_longitude=-106.0),
+    ccrs.OSGB(approx=False),
+    ccrs.EuroPP(),
+    ccrs.Geostationary(),
+    ccrs.NearsidePerspective(),
+    ccrs.Gnomonic(),
+    ccrs.LambertAzimuthalEqualArea(),
+    ccrs.NorthPolarStereo(),
+    ccrs.OSNI(approx=False),
+    ccrs.SouthPolarStereo(),
+]
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection=proj)
+def plot_all():
+    fig = plt.figure(figsize=(8,10))
+    gs = gridspec.GridSpec(int(len(projections)/4)+1, 4)
+    for i, proj in enumerate(projections):
+        ax = fig.add_subplot(gs[i], projection=proj)
+        ax.coastlines()
+        ax.gridlines(draw_labels=['left', 'bottom'])
+        mcm.maggridlines(ax, draw_labels=['right', 'top'])
+    plt.show()
 
-loc = mticker.FixedLocator([-180, -45, 0, 45, 180])
-gl = ax.gridlines(draw_labels=True, zorder=1)
-#gl = ax.gridlines(zorder=1)
-#gl.xlocator = loc
-#gl.right_labels = False
-#gl.top_labels = False
-#ax.set_extent([-170., -35., -80., 80.], crs=ccrs.PlateCarree())
-#ax.set_extent([-161., -131., 50., 75], crs=ccrs.PlateCarree())
-#ax.set_extent([-45., 135., 40., 40.], crs=ccrs.PlateCarree())
 
-ax.coastlines()
-ax.gridlines()
+def plot_single(proj):
+    fig = plt.figure(figsize=(8,5))
+    ax = fig.add_subplot(111, projection=proj)
+    ax.coastlines()
+    ax.gridlines(draw_labels=['left', 'bottom'])
+    mcm.maggridlines(ax, draw_labels=['right', 'top'])
+    plt.show()
 
-A = Apex(2003)
-
-mgl = mcm.maggridlines(ax, draw_labels=True)
-#gl = mcm.maggridlines(ax, apex=A, draw_labels=True, xlabel_style={'color':'limegreen'}, collection_kwargs={'color':'magenta'})
-#mgl.bottom_labels = False
-#mgl.left_labels = False
-
-plt.show()
+if __name__ == '__main__':
+    plot_single(ccrs.Robinson())
+    plot_all()
