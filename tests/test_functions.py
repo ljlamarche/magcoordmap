@@ -1,8 +1,9 @@
+import pytest
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-import matplotlib.ticker as mticker
+#import matplotlib.gridspec as gridspec
+#import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
-from apexpy import Apex
+#from apexpy import Apex
 import magcoordmap as mcm
 
 projections = [
@@ -31,25 +32,19 @@ projections = [
     ccrs.SouthPolarStereo(),
 ]
 
-def plot_all():
-    fig = plt.figure(figsize=(8,10))
-    gs = gridspec.GridSpec(int(len(projections)/4)+1, 4)
-    for i, proj in enumerate(projections):
-        ax = fig.add_subplot(gs[i], projection=proj)
-        ax.coastlines()
-        ax.gridlines(draw_labels=['left', 'bottom'])
-        mcm.maggridlines(ax, draw_labels=['right', 'top'])
-    plt.show()
 
-
-def plot_single(proj):
+@pytest.mark.parametrize('proj', projections)
+def test_full_map(proj):
+    proj_name = type(proj).__name__
     fig = plt.figure(figsize=(8,5))
     ax = fig.add_subplot(111, projection=proj)
     ax.coastlines()
-    ax.gridlines(draw_labels=['left', 'bottom'])
-    mcm.maggridlines(ax, draw_labels=['right', 'top'])
-    plt.show()
+    #ax.gridlines(draw_labels=['left', 'bottom'])
+    #mcm.maggridlines(ax, draw_labels=['right', 'top'])
+    ax.gridlines(draw_labels=True)
+    mcm.maggridlines(ax, draw_labels=True)
+    ax.set_title(proj_name)
+    plt.savefig(f'test_plots/{proj_name}.png')
+    plt.close()
 
-if __name__ == '__main__':
-    plot_single(ccrs.Robinson())
-    plot_all()
+
