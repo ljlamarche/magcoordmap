@@ -78,7 +78,7 @@ Magcoordmap is released under the BSD 3-clause license. See LICENSE in the root 
 
 Copyright (c) Leslie Lamarche. All rights reserved.
 
-Parts of the source code are originally from [Cartopy](https://github.com/SciTools/cartopy), which is also releasedunder the BSD 3-clause license.  These parts retain their original copyright.
+Parts of the source code are originally from [Cartopy](https://github.com/SciTools/cartopy), which is also released under the BSD 3-clause license.  These parts retain their original copyright.
 
 Copyright (c) Crown and Cartopy contributors. All rights reserved.
 
