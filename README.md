@@ -1,6 +1,8 @@
 # magcoordmap
 Adds a grid of constant magnetic latitude and longitude to a cartopy map.  This currently only supports Apex coordinates as provided by [apexpy](https://apexpy.readthedocs.io/en/latest/).
 
+[![DOI](https://zenodo.org/badge/789005603.svg)](https://doi.org/10.5281/zenodo.15170987)
+
 ![Example map of Alaska with both Geodetic and Apex magnetic gridlines on it.](https://github.com/ljlamarche/magcoordmap/blob/main/example_map.png)
 
 # Installation
