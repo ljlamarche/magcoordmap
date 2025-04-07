@@ -44,7 +44,7 @@ def test_full_map(proj):
     ax.gridlines(draw_labels=True)
     mcm.maggridlines(ax, draw_labels=True)
     ax.set_title(proj_name)
-    plt.savefig(f'test_plots/{proj_name}.png')
+    plt.savefig(f'test_{proj_name}.png')
     plt.close()
 
 
