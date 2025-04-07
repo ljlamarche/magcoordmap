@@ -4,8 +4,17 @@
 name: Publish magcoordmap to PyPI
 
 on:
-  pull_request:
-    branches: ['main']
+  workflow_dispach:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
   release:
     types: [published]
 
@@ -36,7 +45,7 @@ jobs:
 
   test-pypi-publish:
     name: Upload release to TestPyPI
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment:
       name: testpypi
