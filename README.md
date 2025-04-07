@@ -4,15 +4,22 @@ Adds a grid of constant magnetic latitude and longitude to a cartopy map.  This 
 ![Example map of Alaska with both Geodetic and Apex magnetic gridlines on it.](https://github.com/ljlamarche/magcoordmap/blob/main/example_map.png)
 
 # Installation
-This package can be installed with pip after cloning.
+This package can be installed from PyPI.
 
+```
+pip install magcoordmap
+```
+
+For development, clone the repository and then install with pip.
 ```
 git clone https://github.com/ljlamarche/magcoordmap.git
 cd magcoordmap
-pip install .
+pip install -e .
 ```
 
 Note that some dependencies ([apexpy](https://apexpy.readthedocs.io/en/latest/) and [cartopy](https://scitools.org.uk/cartopy/docs/latest/)) are dependent on correct linking with compiled libraries on your system.  If installation is proving problematic, try installing these packages independently following their own installation instructions before installing magcoordmap with pip.
+
+In accordance with the apexpy and cartopy requirements, magcoordmap works with Python 3.10 or later.  It may work with earlier versions if you have valid versions of these two packages installed, but it has not been tested.
 
 # Usage
 To add a magnetic coordinate grid to a cartopy map with the axes `ax`, simpily import `magcoordmap` and use the `maggridlines` function.
