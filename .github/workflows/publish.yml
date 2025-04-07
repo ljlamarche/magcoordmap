@@ -4,7 +4,7 @@
 name: Publish magcoordmap to PyPI
 
 on:
-  workflow_dispach:
+  workflow_dispatch:
     inputs:
       logLevel:
         description: 'Log level'
