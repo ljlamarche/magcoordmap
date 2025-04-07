@@ -3,6 +3,8 @@
 # This file is modified from gridliner.py, which is part of Cartopy.
 # Cartopy is released under the BSD 3-clause license.  The source code and
 # full licence for Cartopy are available at https://github.com/SciTools/cartopy
+# A full list of code contributors ("Cartopy contributors") can be found at 
+# https://github.com/SciTools/cartopy/graphs/contributors.
 
 # Cartopy code: Copyright (c) Crown and Cartopy contributors. All rights reserved.
 # Magcoord code: Copyright (c) Leslie Lamarche. All rights reserved.

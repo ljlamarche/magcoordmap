@@ -82,6 +82,8 @@ Parts of the source code are originally from [Cartopy](https://github.com/SciToo
 
 Copyright (c) Crown and Cartopy contributors. All rights reserved.
 
+A full list of code contributors ("Cartopy contributors") can be found at [https://github.com/SciTools/cartopy/graphs/contributors](https://github.com/SciTools/cartopy/graphs/contributors).
+
 # Acknowlegements
 This code was developed under the following awards:
 
